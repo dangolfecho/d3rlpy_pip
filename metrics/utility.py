@@ -14,6 +14,7 @@ def evaluate_qlearning_with_environment(
     env: GymEnv,
     n_trials: int = 10,
     epsilon: float = 0.0,
+    return_rewards_list: bool = False,
 ) -> float:
     """Returns average environment score.
 
@@ -68,6 +69,8 @@ def evaluate_qlearning_with_environment(
             if done or truncated:
                 break
         episode_rewards.append(episode_reward)
+    if(return_rewards_list):
+        return episode_rewards
     return float(np.mean(episode_rewards))
 
 

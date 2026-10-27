@@ -534,8 +534,8 @@ class ReplayBuffer(ReplayBufferBase):
     @property
     def observations(self) -> np.ndarray:
         num_episodes = len(self._buffer.episodes)
-        if os.path.isfile(f'data_observations_{num_episodes}.np'):
-            return np.load(f'data_observations_{num_episodes}.np')
+        if os.path.isfile(f'data_observations_{num_episodes}.npy'):
+            return np.load(f'data_observations_{num_episodes}.npy')
         super_array = []
         bounds = [0]
         val = 1+(num_episodes//1000)
@@ -553,7 +553,7 @@ class ReplayBuffer(ReplayBufferBase):
         for i in range(len(super_array)):
             if(i != 0):
                 super_array[0] = np.vstack((super_array[0], super_array[i]))
-        np.save(f"data_observations_{num_episodes}.np", super_array[0])
+        np.save(f"data_observations_{num_episodes}.npy", super_array[0])
         return super_array[0]
     
     @property
@@ -563,8 +563,9 @@ class ReplayBuffer(ReplayBufferBase):
             return np.load(f'data_actions_{num_episodes}.npy')
         super_array = []
         bounds = [0]
+        val = 1+(num_episodes//1000)
         for i in range(1, 16):
-            bounds.append(int(i*(num_episodes/4)))
+            bounds.append(int(i*(num_episodes/val)))
         bounds.append(num_episodes)
         for i in range(len(bounds)-1):
             l_bound = bounds[i]

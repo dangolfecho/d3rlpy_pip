@@ -31,6 +31,8 @@ from .writers import (
     WriterPreprocessProtocol,
 )
 
+import os
+
 __all__ = [
     "ReplayBufferBase",
     "ReplayBuffer",
@@ -530,13 +532,46 @@ class ReplayBuffer(ReplayBufferBase):
 
     @property
     def observations(self) -> np.ndarray:
-        j = 0
-        for episode in self._buffer.episodes:
-            if j == 0:
-                obs = (episode.observations).copy()
-            else:
-                obs = np.hstack((obs, episode.observations))
-        return obs
+        num_episodes = len(self._buffer.episodes)
+        super_array = []
+        bounds = [0]
+        for i in range(1, 16):
+            bounds.append(int(i*(num_episodes/4)))
+        bounds.append(num_episodes)
+        for i in range(len(bounds)-1):
+            l_bound = bounds[i]
+            r_bound = bounds[i+1]
+            for j in range(l_bound, r_bound):
+                if(j == l_bound):
+                    super_array.append((((self._buffer.episodes)[j]).observations).copy())
+                else:
+                    super_array[i] = np.vstack((super_array[i], ((self._buffer.episodes)[j]).observations))
+        for i in range(len(super_array)):
+            if(i != 0):
+                super_array[0] = np.vstack((super_array[0], super_array[i]))
+        return super_array[0]
+    
+    @property
+    def actions(self) -> np.ndarray:
+        num_episodes = len(self._buffer.episodes)
+        super_array = []
+        bounds = [0]
+        for i in range(1, 16):
+            bounds.append(int(i*(num_episodes/4)))
+        bounds.append(num_episodes)
+        for i in range(len(bounds)-1):
+            l_bound = bounds[i]
+            r_bound = bounds[i+1]
+            for j in range(l_bound, r_bound):
+                if(j == l_bound):
+                    super_array.append((((self._buffer.episodes)[j]).actions).copy())
+                else:
+                    super_array[i] = np.vstack((super_array[i], ((self._buffer.episodes)[j]).actions))
+        for i in range(len(super_array)):
+            if(i != 0):
+                super_array[0] = np.vstack((super_array[0], super_array[i]))
+        print(super_array[0].shape)
+        return super_array[0]
 
     @property
     def episodes(self) -> Sequence[EpisodeBase]:

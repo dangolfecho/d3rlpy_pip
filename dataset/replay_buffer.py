@@ -32,6 +32,7 @@ from .writers import (
 )
 
 import os
+from tqdm import tqdm
 
 __all__ = [
     "ReplayBufferBase",
@@ -533,15 +534,18 @@ class ReplayBuffer(ReplayBufferBase):
     @property
     def observations(self) -> np.ndarray:
         num_episodes = len(self._buffer.episodes)
+        if os.path.isfile(f'data_observations_{num_episodes}.np')
+            return np.load(f'data_observations_{num_episodes}.np')
         super_array = []
         bounds = [0]
-        for i in range(1, 16):
-            bounds.append(int(i*(num_episodes/4)))
+        val = 1+(num_episodes//1000)
+        for i in range(1, val):
+            bounds.append(int(i*(num_episodes/val)))
         bounds.append(num_episodes)
         for i in range(len(bounds)-1):
             l_bound = bounds[i]
             r_bound = bounds[i+1]
-            for j in range(l_bound, r_bound):
+            for j in tqdm(range(l_bound, r_bound)):
                 if(j == l_bound):
                     super_array.append((((self._buffer.episodes)[j]).observations).copy())
                 else:
@@ -549,6 +553,7 @@ class ReplayBuffer(ReplayBufferBase):
         for i in range(len(super_array)):
             if(i != 0):
                 super_array[0] = np.vstack((super_array[0], super_array[i]))
+        np.save("data_observations_{num_episodes}.np", super_array[0])
         return super_array[0]
     
     @property
@@ -562,7 +567,7 @@ class ReplayBuffer(ReplayBufferBase):
         for i in range(len(bounds)-1):
             l_bound = bounds[i]
             r_bound = bounds[i+1]
-            for j in range(l_bound, r_bound):
+            for j in tqdm(range(l_bound, r_bound)):
                 if(j == l_bound):
                     super_array.append((((self._buffer.episodes)[j]).actions).copy())
                 else:

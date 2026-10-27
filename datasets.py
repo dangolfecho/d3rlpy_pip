@@ -585,9 +585,7 @@ def get_minari(
         )
 
         if (env.spec.max_episode_steps is None):
-            return dataset, GymnasiumTimeLimit(
-                unwrapped_env, max_episode_steps=int(1e4)
-            )
+            return (dataset, unwrapped_env)
         else:
             return dataset, GymnasiumTimeLimit(
                 unwrapped_env, max_episode_steps=env.spec.max_episode_steps

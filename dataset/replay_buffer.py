@@ -529,6 +529,16 @@ class ReplayBuffer(ReplayBufferBase):
         )
 
     @property
+    def observations(self) -> np.ndarray:
+        j = 0
+        for episode in self._buffer.episodes:
+            if j == 0:
+                obs = (episode.observations).copy()
+            else:
+                obs = np.hstack((obs, episode.observations))
+        return obs
+
+    @property
     def episodes(self) -> Sequence[EpisodeBase]:
         return self._buffer.episodes
 

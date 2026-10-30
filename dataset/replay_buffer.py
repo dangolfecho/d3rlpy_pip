@@ -608,10 +608,10 @@ class ReplayBuffer(ReplayBufferBase):
         return super_array[0]
 
     @property
-    def not_dones(self) -> np.ndarray:
+    def done(self) -> np.ndarray:
         num_episodes = len(self._buffer.episodes)
-        if os.path.isfile(f'data_not_done_{num_episodes}.npy'):
-            return np.load(f'data_not_done_{num_episodes}.npy')
+        if os.path.isfile(f'data_done_{num_episodes}.npy'):
+            return np.load(f'data_done_{num_episodes}.npy')
         super_array = []
         bounds = [0]
         val = 1+(num_episodes//1000)
@@ -630,7 +630,7 @@ class ReplayBuffer(ReplayBufferBase):
         for i in range(len(super_array)):
             if(i != 0):
                 super_array[0] = np.vstack((super_array[0], super_array[i]))
-        np.save(f"data_not_done_{num_episodes}.npy", super_array[0])
+        np.save(f"data_done_{num_episodes}.npy", super_array[0])
         return super_array[0]
 
     @property

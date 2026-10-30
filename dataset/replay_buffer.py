@@ -622,11 +622,14 @@ class ReplayBuffer(ReplayBufferBase):
             l_bound = bounds[i]
             r_bound = bounds[i+1]
             for j in tqdm(range(l_bound, r_bound)):
+                len_ep = ((self._buffer.episodes)[j]).size()
+                term_array = np.zeros((len_ep, 1), dtype=np.float32)
+                term_array[-1] = 1
                 if(j == l_bound):
-                    super_array.append((((self._buffer.episodes)[j]).terminated).copy())
+                    super_array.append(term_array.copy())
                 else:
                     super_array[i] = np.vstack((super_array[i],
-                        ((self._buffer.episodes)[j]).terminated))
+                        term_array.copy()))
         for i in range(len(super_array)):
             if(i != 0):
                 super_array[0] = np.vstack((super_array[0], super_array[i]))

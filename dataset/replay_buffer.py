@@ -582,6 +582,58 @@ class ReplayBuffer(ReplayBufferBase):
         return super_array[0]
 
     @property
+    def rewards(self) -> np.ndarray:
+        num_episodes = len(self._buffer.episodes)
+        if os.path.isfile(f'data_rewards_{num_episodes}.npy'):
+            return np.load(f'data_rewards_{num_episodes}.npy')
+        super_array = []
+        bounds = [0]
+        val = 1+(num_episodes//1000)
+        for i in range(1, 16):
+            bounds.append(int(i*(num_episodes/val)))
+        bounds.append(num_episodes)
+        for i in range(len(bounds)-1):
+            l_bound = bounds[i]
+            r_bound = bounds[i+1]
+            for j in tqdm(range(l_bound, r_bound)):
+                if(j == l_bound):
+                    super_array.append((((self._buffer.episodes)[j]).rewards).copy())
+                else:
+                    super_array[i] = np.vstack((super_array[i],
+                        ((self._buffer.episodes)[j]).rewards))
+        for i in range(len(super_array)):
+            if(i != 0):
+                super_array[0] = np.vstack((super_array[0], super_array[i]))
+        np.save(f"data_rewards_{num_episodes}.npy", super_array[0])
+        return super_array[0]
+
+    @property
+    def not_dones(self) -> np.ndarray:
+        num_episodes = len(self._buffer.episodes)
+        if os.path.isfile(f'data_not_done_{num_episodes}.npy'):
+            return np.load(f'data_not_done_{num_episodes}.npy')
+        super_array = []
+        bounds = [0]
+        val = 1+(num_episodes//1000)
+        for i in range(1, 16):
+            bounds.append(int(i*(num_episodes/val)))
+        bounds.append(num_episodes)
+        for i in range(len(bounds)-1):
+            l_bound = bounds[i]
+            r_bound = bounds[i+1]
+            for j in tqdm(range(l_bound, r_bound)):
+                if(j == l_bound):
+                    super_array.append((((self._buffer.episodes)[j]).terminated).copy())
+                else:
+                    super_array[i] = np.vstack((super_array[i],
+                        ((self._buffer.episodes)[j]).terminated))
+        for i in range(len(super_array)):
+            if(i != 0):
+                super_array[0] = np.vstack((super_array[0], super_array[i]))
+        np.save(f"data_not_done_{num_episodes}.npy", super_array[0])
+        return super_array[0]
+
+    @property
     def episodes(self) -> Sequence[EpisodeBase]:
         return self._buffer.episodes
 

@@ -564,7 +564,7 @@ class ReplayBuffer(ReplayBufferBase):
         super_array = []
         bounds = [0]
         val = 1+(num_episodes//1000)
-        for i in range(1, 16):
+        for i in range(1, val):
             bounds.append(int(i*(num_episodes/val)))
         bounds.append(num_episodes)
         for i in range(len(bounds)-1):
@@ -589,7 +589,7 @@ class ReplayBuffer(ReplayBufferBase):
         super_array = []
         bounds = [0]
         val = 1+(num_episodes//1000)
-        for i in range(1, 16):
+        for i in range(1, val):
             bounds.append(int(i*(num_episodes/val)))
         bounds.append(num_episodes)
         for i in range(len(bounds)-1):
@@ -615,7 +615,7 @@ class ReplayBuffer(ReplayBufferBase):
         super_array = []
         bounds = [0]
         val = 1+(num_episodes//1000)
-        for i in range(1, 16):
+        for i in range(1, val):
             bounds.append(int(i*(num_episodes/val)))
         bounds.append(num_episodes)
         for i in range(len(bounds)-1):

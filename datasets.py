@@ -563,7 +563,8 @@ def get_minari(
             actions.append(ep.actions)
             rewards.append(ep.rewards)
             terminals.append(ep.terminations)
-            timeouts.append(ep.truncations)
+            #timeouts.append(ep.truncations)
+            timeouts.append(np.logical_and(ep.truncations, np.logical_not(ep.terminations)))
 
         if tuple_observation:
             stacked_observations = tuple(

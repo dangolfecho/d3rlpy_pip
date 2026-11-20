@@ -531,7 +531,7 @@ def get_minari(
 
         for ep in _dataset:
             if env_type == _MinariEnvType.BOX:
-                _observations = ep.observations
+                _observations = ep.observations[:-1]
             elif env_type == _MinariEnvType.GOAL_CONDITIONED:
                 assert isinstance(ep.observations, dict)
                 if isinstance(ep.observations["desired_goal"], dict):
@@ -547,6 +547,7 @@ def get_minari(
                     )
                 else:
                     goal_obs = ep.observations["desired_goal"]
+                    goal_obs = goal_obs[:-1]
                 if tuple_observation:
                     _observations = (ep.observations["observation"], goal_obs)
                 else:
@@ -583,6 +584,7 @@ def get_minari(
             trajectory_slicer=trajectory_slicer,
             action_space=action_space,
         )
+        dataset.cache_tag = env_name.replace('/', '_')
 
         if (env.spec.max_episode_steps is None):
             return (dataset, unwrapped_env)
